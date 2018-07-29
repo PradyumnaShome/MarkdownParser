@@ -14,3 +14,8 @@ The output is an HTML file generated from Markdown. If the input is "source.md",
 1. Headings
 2. Bold
 3. Italics
+4. Links
+5. Images (coming soon)
+
+## Screenshots
+![Mockito README](https://i.gyazo.com/e3b862236ef99601ea88944d474d8f0c.png)
