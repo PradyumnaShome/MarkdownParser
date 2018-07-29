@@ -21,10 +21,10 @@ def processParagraph(p):
         p = processLabel(p, "**", "b")
         # Code
         p = processLabel(p, "`", "code")
-        # Links
-        p = processLinks(p)
         # Images
         p = processImages(p)
+        # Links
+        p = processLinks(p)
     return p
 
 def processLinks(p):
@@ -35,11 +35,22 @@ def processLinks(p):
         linkText = link.group("linkText")
         
         parsedLink = f'<a href="{linkUrl}">{linkText}</a>'
+        print(f"Link: {parsedLink}")
         p = p.replace(link[0], parsedLink)
         link = re.search(regexp, p)
     return p
 
 def processImages(p):
+    regexp = r"!\[(?P<imageText>.*)\]\((?P<imageUrl>.*)\)"
+    image = re.search(regexp, p)
+    while image != None:
+        imageUrl = image.group("imageUrl")
+        imageText = image.group("imageText")
+        
+        parsedImage = f'<img src="{imageUrl}" title="{imageText}"/>'
+        print(f"Image: {parsedImage}")
+        p = p.replace(image[0], parsedImage)
+        image = re.search(regexp, p)
     return p
 
 def processPlaintext(p):
@@ -69,11 +80,10 @@ def processLabel(p, identifier, tagname):
         identifier = escapeIdentifier(identifier)
     regexp = fr"{identifier}.*{identifier}"
     for match in re.findall(regexp, p):
-        print(f"Match: {match}")
         # Remove surrounding symbols
         textWithoutIdentifier = match[1:-1]
         parsedText = f"<{tagname}>{textWithoutIdentifier}</{tagname}>"
-        print(parsedText)
+        print(f"{tagname}: {parsedText}")
         p = p.replace(match, parsedText)
     return p
 

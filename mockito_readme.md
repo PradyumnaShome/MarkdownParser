@@ -5,6 +5,7 @@
 </a>
 
 [Google](https://google.com)
+![Google Logo](https://www.google.com/logos/doodles/2018/maria-rebecca-latigo-de-hernandezs-122nd-birthday-4741691587166208-l.png)
 
 Most popular mocking framework for Java
 
