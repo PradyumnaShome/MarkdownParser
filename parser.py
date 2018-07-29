@@ -6,25 +6,52 @@ def getParagraphs(input):
     return input.split("\n\n")
 
 
+def isHeading(p):
+    return p.startswith("%") or p.startswith("#")
+
+
 def processParagraph(p):
-    p = processHeading(p)
-    # Italics
-    p = processLabel(p, "*", "i")
-    # Bold
-    p = processLabel(p, "**", "b")
-    # Code
-    p = processLabel(p, "`", "code")
+    if(isHeading(p)):
+        p = processHeading(p)
+    else:
+        p = processPlaintext(p)
+        # Italics
+        p = processLabel(p, "*", "i")
+        # Bold
+        p = processLabel(p, "**", "b")
+        # Code
+        p = processLabel(p, "`", "code")
+        # Links
+        p = processLinks(p)
+        # Images
+        p = processImages(p)
     return p
 
+def processLinks(p):
+    regexp = r"\[(?P<linkText>.*)\]\((?P<linkUrl>.*)\)"
+    link = re.search(regexp, p)
+    while link != None:
+        linkUrl = link.group("linkUrl")
+        linkText = link.group("linkText")
+        
+        parsedLink = f'<a href="{linkUrl}">{linkText}</a>'
+        p = p.replace(link[0], parsedLink)
+        link = re.search(regexp, p)
+    return p
+
+def processImages(p):
+    return p
+
+def processPlaintext(p):
+    p = f"<p>{p}</p>"
+    return p
 
 def processHeading(p):
     countHeadingLevel = calcHeadingLevel(p)
-
-    if p.startswith("%") or p.startswith("#"):
-        p = "<h{}>{}</h{}>".format(countHeadingLevel,
-                                   p[countHeadingLevel + 1:], countHeadingLevel)
-
+    p = "<h{}>{}</h{}>".format(countHeadingLevel,
+                               p[countHeadingLevel + 1:], countHeadingLevel)
     return p
+
 
 def escapeIdentifier(identifier):
     escapeIdentifier = ""
@@ -32,8 +59,10 @@ def escapeIdentifier(identifier):
         escapeIdentifier += fr"\{char}"
     return escapeIdentifier
 
+
 def shouldIdentifierBeEscaped(identifier):
     return identifier.startswith("*")
+
 
 def processLabel(p, identifier, tagname):
     if shouldIdentifierBeEscaped(identifier):
@@ -62,7 +91,7 @@ def parse(input):
     paragraphs = getParagraphs(input)
     paragraphs = [processParagraph(paragraph) for paragraph in paragraphs]
     joined = "\n\n".join(paragraphs)
-    output = "<html><body>{}</body></html>".format(joined)
+    output = f"""<html>\n\t<body>\n\t{joined}\n\t</body>\n</html>"""
     return output
 
 
