@@ -15,10 +15,12 @@ def processParagraph(p):
         p = processHeading(p)
     else:
         p = processPlaintext(p)
-        # Italics
-        p = processLabel(p, "*", "i")
         # Bold
-        p = processLabel(p, "**", "b")
+        p = processLabel(p, "**", "strong")
+        # Italics
+        p = processLabel(p, "*", "em")
+        # Underlines
+        p = processLabel(p, "_", "u")
         # Code
         p = processLabel(p, "`", "code")
         # Images
@@ -27,18 +29,20 @@ def processParagraph(p):
         p = processLinks(p)
     return p
 
+
 def processLinks(p):
     regexp = r"\[(?P<linkText>.*)\]\((?P<linkUrl>.*)\)"
     link = re.search(regexp, p)
     while link != None:
         linkUrl = link.group("linkUrl")
         linkText = link.group("linkText")
-        
+
         parsedLink = f'<a href="{linkUrl}">{linkText}</a>'
         print(f"Link: {parsedLink}")
         p = p.replace(link[0], parsedLink)
         link = re.search(regexp, p)
     return p
+
 
 def processImages(p):
     regexp = r"!\[(?P<imageText>.*)\]\((?P<imageUrl>.*)\)"
@@ -46,16 +50,18 @@ def processImages(p):
     while image != None:
         imageUrl = image.group("imageUrl")
         imageText = image.group("imageText")
-        
+
         parsedImage = f'<img src="{imageUrl}" title="{imageText}"/>'
         print(f"Image: {parsedImage}")
         p = p.replace(image[0], parsedImage)
         image = re.search(regexp, p)
     return p
 
+
 def processPlaintext(p):
     p = f"<p>{p}</p>"
     return p
+
 
 def processHeading(p):
     countHeadingLevel = calcHeadingLevel(p)
@@ -77,11 +83,16 @@ def shouldIdentifierBeEscaped(identifier):
 
 def processLabel(p, identifier, tagname):
     if shouldIdentifierBeEscaped(identifier):
-        identifier = escapeIdentifier(identifier)
-    regexp = fr"{identifier}.*{identifier}"
+        escapedIdentifier = escapeIdentifier(identifier)
+        regexp = fr"{escapedIdentifier}.*{escapedIdentifier}"
+    else:
+        regexp = fr"{identifier}.*{identifier}"
+
     for match in re.findall(regexp, p):
+        print(f"Match: {match}")
         # Remove surrounding symbols
-        textWithoutIdentifier = match[1:-1]
+        textWithoutIdentifier = match[len(
+            identifier): len(match) - len(identifier)]
         parsedText = f"<{tagname}>{textWithoutIdentifier}</{tagname}>"
         print(f"{tagname}: {parsedText}")
         p = p.replace(match, parsedText)

@@ -7,7 +7,7 @@
 [Google](https://google.com)
 ![Google Logo](https://www.google.com/logos/doodles/2018/maria-rebecca-latigo-de-hernandezs-122nd-birthday-4741691587166208-l.png)
 
-Most popular mocking framework for Java
+**Most popular mocking framework *for* Java**
 
 [![Build Status](https://travis-ci.org/mockito/mockito.svg?branch=release/2.x)](https://travis-ci.org/mockito/mockito) [![Coverage Status](https://img.shields.io/codecov/c/github/mockito/mockito.svg)](https://codecov.io/github/mockito/mockito) [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/mockito/mockito/blob/master/LICENSE)
 
