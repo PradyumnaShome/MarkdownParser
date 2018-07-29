@@ -54,7 +54,7 @@ rules of thumb.}
 
 %% Wisdom
 
-A student was complaining about digital numbers. 'When I take the root
+`A student was complaining about digital numbers. 'When I take the root`
 of two and then square it again, the result is already inaccurate!'.
 Overhearing him, Fu-Tzu laughed. 'Here is a sheet of paper. Write down
 the precise value of the square root of two for me.'

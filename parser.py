@@ -1,14 +1,19 @@
 import sys
 import re
 
+
 def getParagraphs(input):
     return input.split("\n\n")
 
 
 def processParagraph(p):
     p = processHeading(p)
-    p = processBold(p)
-    p = processItalics(p)
+    # Italics
+    p = processLabel(p, "*", "i")
+    # Bold
+    p = processLabel(p, "**", "b")
+    # Code
+    p = processLabel(p, "`", "code")
     return p
 
 
@@ -18,22 +23,29 @@ def processHeading(p):
     if p.startswith("%") or p.startswith("#"):
         p = "<h{}>{}</h{}>".format(countHeadingLevel,
                                    p[countHeadingLevel + 1:], countHeadingLevel)
-    
+
     return p
 
+def escapeIdentifier(identifier):
+    escapeIdentifier = ""
+    for char in identifier:
+        escapeIdentifier += fr"\{char}"
+    return escapeIdentifier
 
-def processBold(p):
-    for match in re.findall(r"\*\*.*\*\*", p):
-        boldedText = "<b>{}</b>".format(match[1:-1])
-        p = p.replace(match, boldedText)
-    return p
-    
+def shouldIdentifierBeEscaped(identifier):
+    return identifier.startswith("*")
 
-
-def processItalics(p):
-    for match in re.findall(r"\*.*\*", p):
-        boldedText = "<i>{}</i>".format(match[1:-1])
-        p = p.replace(match, boldedText)
+def processLabel(p, identifier, tagname):
+    if shouldIdentifierBeEscaped(identifier):
+        identifier = escapeIdentifier(identifier)
+    regexp = fr"{identifier}.*{identifier}"
+    for match in re.findall(regexp, p):
+        print(f"Match: {match}")
+        # Remove surrounding symbols
+        textWithoutIdentifier = match[1:-1]
+        parsedText = f"<{tagname}>{textWithoutIdentifier}</{tagname}>"
+        print(parsedText)
+        p = p.replace(match, parsedText)
     return p
 
 
